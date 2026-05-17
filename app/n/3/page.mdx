@@ -1,108 +1,39 @@
 export const metadata = {
-  title: '6 CSS Patterns to Cut Boilerplate',
+  title: 'Another New Chapter',
   alternates: {
     canonical: '/n/3',
   },
-}; 
+  date: new Date().toLocaleDateString(),
+};
 
-# 6 CSS Patterns to Cut Boilerplate
+# Another New Chapter
 
 <br />
 
-Micro-optimizations and quality-of-life hacks to keep your styles tight, maintainable, and future-proof.
+After working at Equilibrium Markets for 6 months, I started looking at opportunities at other companies. After around a month of job hunting, I landed a role as a software engineer at a company called Quantexa.
 
-## 1. **`:where()` for Zero-Specificity Resets**
+Quantexa is an AI company focused on creating software for entity resolution.
 
-Stop fighting cascade weight—wrap base rules in `:where()`:
+## What is Entity Resolution?
 
-```css
-:where(h1, h2, h3) {
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-}
-````
+> Entity Resolution is the process of working out whether multiple records are referencing the same real-world thing, such as a person, organization, address, phone number, bank account, or device. It takes multiple disparate data points — from external and internal sources — and resolves them into one distinct, unique entity.
 
-Selectors inside `:where()` weigh *0*, so your utility classes still win.
+## Life at Quantexa
 
----
+Overall, I am enjoying my time at Quantexa and learning a lot. I have the opportunity to explore new ways of problem solving. Some paradigms I am actively learning and using include:
 
-## 2. **Logical Properties > Four-Direction Madness**
+- **Functional programming**
+- **Reactive programming**
 
-Goodbye `padding-left` vs. `padding-right`. One line covers LTR *and* RTL:
+And some of the new technologies and tools I have been picking up:
 
-```css
-.card {
-  padding-inline: 1rem;  /* left & right */
-  padding-block: 0.75rem; /* top & bottom */
-}
-```
+- **Scala**
+- **Angular**
+- **RxJS**
+- **NgRx**
+- **Cats Effect**
+- **Kubernetes (K8s)**
 
-No more media-query hacks when direction changes.
+I hope to write more about the skills and paradigms I am picking up at Quantexa. So whoever you are, please look forward to my next posts — mainly written for myself and my own learning (sort of like rubber ducking).
 
----
-
-## 3. **Style Parent Elements with `:has()`**
-
-JavaScript who? Let CSS drive state:
-
-```css
-/* Outline group when any input is invalid */
-.form:has(input:invalid) {
-  outline: 2px solid var(--danger);
-}
-```
-
-Parent-aware styling—finally native.
-
----
-
-## 4. **Container Queries for Truly Responsive Components**
-
-Skip breakpoint soup; size to *context* instead of viewport:
-
-```css
-.card {
-  container-type: inline-size;
-}
-
-@container (max-width: 350px) {
-  .card {
-    grid-template-columns: 1fr; /* stack on narrow cards */
-  }
-}
-```
-
-Components that adapt wherever you drop them.
-
----
-
-## 5. **`accent-color` & `color-scheme` → Native Theming**
-
-Theme form controls and scrollbars with one property:
-
-```css
-:root {
-  color-scheme: dark light;
-  accent-color: hsl(265 87% 67%); /* 💜 */
-}
-```
-
-Instant brand vibes, zero third-party widgets.
-
----
-
-## 6. **`@layer` to Tame the Cascade**
-
-Group utilities, components, and overrides—predictably:
-
-```css
-@layer reset, base, utilities, components, overrides;
-
-/* later in the file… */
-@layer utilities {
-  .text-center { text-align: center; }
-}
-```
-
-No more “why is Tailwind beating my button styles?”.
+<p className="text-sm text-gray-400 dark:text-gray-500 mt-8">Posted {metadata.date}</p>
