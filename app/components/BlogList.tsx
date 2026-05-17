@@ -29,10 +29,22 @@ const getTitlesAndReadPage = () => {
 export default function BlogList() {
   const dirs = getTitlesAndReadPage()
   return (
-    <div className='flex flex-col'>
+    <ul className="divide-y divide-gray-100 dark:divide-zinc-800">
       {dirs.map(([dir, title], index) => (
-        <Link key={index} href={`/n/${dir}`}>{title}</Link>
+        <li key={index}>
+          <Link
+            href={`/n/${dir}`}
+            className="flex items-center justify-between py-3 group"
+          >
+            <span className="text-gray-900 dark:text-zinc-200 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200">
+              {title}
+            </span>
+            <span className="text-gray-400 dark:text-zinc-600 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200">
+              →
+            </span>
+          </Link>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
