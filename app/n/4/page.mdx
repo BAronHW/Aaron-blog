@@ -51,8 +51,8 @@ fromEvent(button, 'click').pipe(
 
 ## Explanation
 
-As you can see, the approach taken to solve the same problem is quite different. In the imperative approach we have to manually manage the cancellation of the in-flight request — storing a reference to the `AbortController`, checking if one already exists, aborting it, then creating a new one, all while handling errors and cleanup in a `try/catch/finally` block. The state management and bookkeeping obscure what the code is actually trying to do.
+As you can see, the approach taken to solve the same problem is quite different. In the imperative approach we have to manually manage the cancellation of the in-flight request storing a reference to the `AbortController`, checking if one already exists, aborting it, then creating a new one, all while handling errors and cleanup in a `try/catch/finally` block. The state management and bookkeeping obscure what the code is actually trying to do.
 
 In the reactive approach, `switchMap` handles all of this automatically. When a new click event arrives, it cancels the previous observable and starts a new one. The intent of the code is expressed directly: *map each click to a fetch, and cancel any previous fetch in progress*. There is no manual state to manage.
 
-This is the core appeal of reactive programming — it lets you describe **what** should happen in response to events, rather than **how** to manage the state required to make it happen.
+This is the core appeal of reactive programming it lets you describe **what** should happen in response to events, rather than **how** to manage the state required to make it happen.
