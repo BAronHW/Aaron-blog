@@ -1,0 +1,32 @@
+export const metadata = {
+  title: 'Programming projects with reactive and functional programming concepts',
+  alternates: {
+    canonical: '/n/5',
+  },
+  date: '24/05/2026',
+};
+
+# Programming projects with reactive and functional programming concepts
+
+## Background Info
+
+Currently I am exploring different ideas and different ways of writing software that were exposed to me while working at Quantexa. Because of this I have been exposed to more reactive and functional programming concepts.
+Therefore, I have elected to create two distinct projects.
+
+## Packet Sniffer TUI
+
+The first project that I will be creating is a Wireshark TUI application written in Node.js. It will use RxJS to create reactivity and Ink for the terminal interface.
+
+The heavy lifting of this project is done via the tshark CLI tool, so simply spawning a child process and observing and parsing its output data is what I will need to do. Of course, all of this will be done with functional programming in mind.
+
+The structure of the program will be as follows: the program will have an immutable state which cannot be modified directly, only reduced over via reducers which take the current state and a dispatched action and then return a new state object. Selectors read and memoize state, meaning that whenever a slice of the state that a selector is responsible for changes, it will return the new state to the caller. Effects, which handle side effects that may occur like fetching data, will also listen out for dispatched actions. Certain people that read this may recognise that this sort of architecture is very similar to NgRx/Redux, which is the point of this project.
+
+I want to mimic those kinds of systems as much as possible because I believe that it can be an effective and elegant way of solving the problem that I have set out to solve.
+
+## LLM Observability and Evaluation Platform
+
+The second project that I have set out to tackle is an LLM agent observability and evaluation platform that will be written completely in TypeScript and Scala, specifically the Typelevel stack. I have been on a journey of understanding the inner workings of the Scala ecosystem and its concepts.
+
+The project will essentially consist of a backend REST API and a client, which in this case is either a frontend web application or a TypeScript SDK that can be directly integrated into a potential agent harness source code directly.
+
+Essentially the idea is that when certain code runs within the agentic harness, requests will be buffered and sent to the backend API with metadata regarding the type of LLM call/request that the SDK observed.

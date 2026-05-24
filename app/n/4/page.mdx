@@ -3,19 +3,130 @@ export const metadata = {
   alternates: {
     canonical: '/n/4',
   },
-  date: new Date().toLocaleDateString(),
+  date: '18/05/26',
 };
 
 # Reactive Programming
 
+<br />
+
 While working at Quantexa I have been exposed to a programming paradigm called reactive programming.
-Reactive programming allows you to propagate changes through data streams rather than processing data via a pull-based approach.
-Instead of explicitly asking for data, your system reacts as new data is pushed through it and different observers receive updates.
+At its core, reactive programming is about modelling your program as a set of **data streams** and the transformations that flow through them.
+Rather than pulling data when you need it, you describe how data should move and be transformed, and your system *reacts* as values arrive.
+The canonical library for this in JavaScript and TypeScript is [RxJS](https://rxjs.dev), which implements the ReactiveX specification.
+Scala has Akka Streams and Monix. Java has Project Reactor and RxJava. The ideas translate across ecosystems.
 
-Here is an example of the differences between how you would approach the same problem in an imperative style versus a reactive style.
-Consider a situation where we want to fetch data when a button is clicked and cancel any previous in-flight request.
+## The Observable
 
-## Imperative
+Everything in reactive programming centres on the **Observable**. An Observable is a lazy, composable data stream that can emit three kinds of notifications:
+
+- `next(value)`  a new value has arrived
+- `error(err)`  something went wrong; the stream terminates
+- `complete()`  no more values will be emitted; the stream terminates
+
+An Observable does nothing until something **subscribes** to it. This is what "lazy" means  no work happens, no requests fire, no timers start, until you call `.subscribe()`.
+
+```typescript
+import { Observable } from 'rxjs';
+
+const counter$ = new Observable<number>(subscriber => {
+  let count = 0;
+  const id = setInterval(() => subscriber.next(count++), 1000);
+
+  // Returned function runs on unsubscribe  this is how cleanup works
+  return () => clearInterval(id);
+});
+
+const sub = counter$.subscribe(value => console.log(value));
+// 0, 1, 2, 3 ... (every second)
+
+setTimeout(() => sub.unsubscribe(), 5000); // stops after 5 seconds
+```
+
+The `$` suffix on `counter$` is a convention for Observable variables. The teardown logic returned from the constructor is the reactive equivalent of `AbortController`  cleanup is built into the model.
+
+## Observers and Subscriptions
+
+The object you pass to `.subscribe()` is called an **Observer**. It defines handlers for each notification type:
+
+```typescript
+const observer = {
+  next: (value: number) => console.log('Value:', value),
+  error: (err: unknown) => console.error('Error:', err),
+  complete: () => console.log('Stream complete'),
+};
+
+counter$.subscribe(observer);
+```
+
+Calling `.subscribe()` returns a **Subscription**. Unsubscribing from it invokes the teardown logic and stops any further emissions from reaching your observer.
+
+## Operators: Transforming Streams
+
+Operators are pure functions that take an Observable and return a new Observable. You compose them using `.pipe()`. This is where reactive programming becomes expressive  complex async behaviour is built up from small, composable pieces.
+
+### Filtering and Transforming
+
+```typescript
+import { fromEvent } from 'rxjs';
+import { map, filter, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+const input = document.getElementById('search') as HTMLInputElement;
+
+fromEvent(input, 'input').pipe(
+  map(event => (event.target as HTMLInputElement).value),
+  filter(text => text.length > 2),
+  debounceTime(300),
+  distinctUntilChanged(),
+).subscribe(query => console.log('Search:', query));
+```
+
+Each operator does one thing:
+
+- `map`  transforms each emitted value (like `Array.prototype.map`)
+- `filter`  drops values that don't pass a predicate
+- `debounceTime(300)`  waits 300ms of silence before letting a value through
+- `distinctUntilChanged`  suppresses a value if it is identical to the previous one
+
+In four lines you have a search input that ignores noise, waits for the user to stop typing, and skips duplicate queries. Implementing this imperatively would require multiple timers, flags, and comparisons scattered across your event handler.
+
+### Flattening Operators
+
+When you map each event to an inner Observable (like a network request), you need a **flattening operator** to handle the overlap between concurrent inner streams. This is one of the trickiest parts of async programming, and reactive programming makes the intent explicit.
+
+<Table data={{
+  headers: ['Operator', 'Behaviour'],
+  rows: [
+    ['switchMap', 'Cancel the previous inner stream, start a new one'],
+    ['concatMap', 'Queue  wait for the previous to complete before starting the next'],
+    ['mergeMap', 'Run all inner streams concurrently'],
+    ['exhaustMap', 'Ignore new outer events while an inner stream is still active'],
+  ],
+}} />
+
+The choice of flattening operator *is* the behaviour. Consider a search-as-you-type feature:
+
+```typescript
+import { fromEvent } from 'rxjs';
+import { map, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { fromFetch } from 'rxjs/fetch';
+
+fromEvent(input, 'input').pipe(
+  map(e => (e.target as HTMLInputElement).value),
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(query => fromFetch(`/api/search?q=${query}`)),
+).subscribe(response => response.json().then(render));
+```
+
+`switchMap` ensures that if a new query arrives before the previous request completes, that request is automatically cancelled. You never accidentally render stale results. Compare this to the manual `AbortController` bookkeeping you would need imperatively.
+
+## A Closer Look: Imperative vs Reactive
+
+Here is the same problem  fetch on button click, cancel any in-flight request  written both ways.
+
+### Imperative
+
 ```typescript
 let currentRequest: AbortController | null = null;
 
@@ -26,20 +137,19 @@ button.addEventListener('click', async () => {
   currentRequest = new AbortController();
 
   try {
-    const res = await fetch('/api/data', {
-      signal: currentRequest.signal,
-    });
+    const res = await fetch('/api/data', { signal: currentRequest.signal });
     render(await res.json());
   } catch (e) {
-    if (e.name !== 'AbortError') throw e;
+    if ((e as Error).name !== 'AbortError') throw e;
   } finally {
     currentRequest = null;
   }
 });
 ```
 
-## Reactive
-```javascript
+### Reactive
+
+```typescript
 import { fromEvent } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { fromFetch } from 'rxjs/fetch';
@@ -49,10 +159,21 @@ fromEvent(button, 'click').pipe(
 ).subscribe(res => render(res));
 ```
 
-## Explanation
+The imperative version manages external mutable state (`currentRequest`), couples cancellation logic with the fetch logic, and requires error handling to distinguish abort errors from real failures. The reactive version expresses the intent directly: *for each click, fetch data, cancelling any previous fetch*. The state management is absorbed into the operator.
 
-As you can see, the approach taken to solve the same problem is quite different. In the imperative approach we have to manually manage the cancellation of the in-flight request storing a reference to the `AbortController`, checking if one already exists, aborting it, then creating a new one, all while handling errors and cleanup in a `try/catch/finally` block. The state management and bookkeeping obscure what the code is actually trying to do.
+## When to Use It
 
-In the reactive approach, `switchMap` handles all of this automatically. When a new click event arrives, it cancels the previous observable and starts a new one. The intent of the code is expressed directly: *map each click to a fetch, and cancel any previous fetch in progress*. There is no manual state to manage.
+Reactive programming is not the right tool for every job. It adds cognitive overhead  understanding cold vs hot, which flattening operator to pick, how errors propagate  and that cost is only worth it when the problem involves:
 
-This is the core appeal of reactive programming it lets you describe **what** should happen in response to events, rather than **how** to manage the state required to make it happen.
+- Multiple async sources that need coordinating
+- User input that needs debouncing, throttling, or deduplication
+- Data that arrives over time (websockets, polling, server-sent events)
+- Cancellation requirements (search-as-you-type, route changes)
+
+For a simple one-off fetch in a component, `async/await` is clearer. Reach for observables when you are managing *streams of events over time*, especially when those streams interact with each other.
+
+---
+
+The shift that reactive programming requires is thinking in streams rather than values. Instead of asking "what is the current value?", you ask "what values will arrive, in what order, and how should they be transformed?". Once that model clicks, the operator vocabulary becomes a precise language for describing async behaviour  and the imperative alternative starts to look like a lot of unnecessary bookkeeping.
+
+<p className="text-sm text-gray-400 dark:text-gray-500 mt-8">Posted {metadata.date}</p>

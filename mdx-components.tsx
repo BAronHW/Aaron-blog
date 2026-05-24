@@ -82,19 +82,19 @@ const components = {
     return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />;
   },
   Table: ({ data }: { data: { headers: string[]; rows: string[][] } }) => (
-    <table>
-      <thead>
+    <table className="w-full text-sm text-left text-gray-800 dark:text-zinc-300 my-4">
+      <thead className="border-b border-gray-200 dark:border-zinc-700">
         <tr>
           {data.headers.map((header, index) => (
-            <th key={index}>{header}</th>
+            <th key={index} className="py-2 pr-6 font-medium text-gray-900 dark:text-zinc-100">{header}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {data.rows.map((row, index) => (
-          <tr key={index}>
+          <tr key={index} className="border-b border-gray-100 dark:border-zinc-800">
             {row.map((cell, cellIndex) => (
-              <td key={cellIndex}>{cell}</td>
+              <td key={cellIndex} className="py-2 pr-6 text-sm first:font-mono first:text-xs">{cell}</td>
             ))}
           </tr>
         ))}
