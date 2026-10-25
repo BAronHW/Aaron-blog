@@ -1,18 +1,20 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-family-sans: 'Inter', sans-serif;
+  --font-family-sans: "Iowan Old Style Local","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --font-family-serif: "Iowan Old Style Local","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
 }
 
 :root {
-  --sh-class: #7aa2f7;
-  --sh-sign: #89ddff;
-  --sh-string: #9ece6a;
-  --sh-keyword: #bb9af7;
-  --sh-comment: #565f89;
-  --sh-jsxliterals: #7aa2f7;
-  --sh-property: #73daca;
-  --sh-entity: #e0af68;
+  --color-bg: #1b1a19;
+  --sh-class: #4EC9B0;
+  --sh-sign: #D4D4D4;
+  --sh-string: #CE9178;
+  --sh-keyword: #569CD6;
+  --sh-comment: #6A9955;
+  --sh-jsxliterals: #569CD6;
+  --sh-property: #9CDCFE;
+  --sh-entity: #DCDCAA;
 }
 
 html {
@@ -21,6 +23,7 @@ html {
 }
 
 body {
+  background-color: var(--color-bg);
   text-rendering: optimizeLegibility;
 }
 
@@ -32,7 +35,7 @@ h4 {
 }
 
 pre {
-  background-color: #16161e;
+  background-color: #1E1E1E;
   border-radius: 0.5rem;
   overflow-x: auto;
   padding: 1rem;

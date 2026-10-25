@@ -7,16 +7,24 @@
     "delete": "rm -rf app/n"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "@next/mdx": "16.1.5",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/mdx": "^2.0.13",
     "@vercel/analytics": "^1.5.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cn": "^0.5.0",
     "framer-motion": "^12.16.0",
+    "lucide-react": "^1.61.0",
     "next": "16.2.3",
     "postgres": "^3.4.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "sugar-high": "^0.9.3"
+    "shadcn": "^4.22.1",
+    "sugar-high": "^0.9.3",
+    "tailwind-merge": "^3.7.0",
+    "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.29",
