@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { highlight } from 'sugar-high'
+import Image from 'next/image'
 import { projects } from '@/app/data/projects'
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
@@ -76,6 +77,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Architecture diagram */}
+      {project.architectureImage && (
+        <div className="space-y-3">
+          <Image
+            src={project.architectureImage}
+            alt={`${project.name} architecture diagram`}
+            width={600}
+            height={500}
+            className="rounded-lg w-full max-w-lg"
+          />
         </div>
       )}
 

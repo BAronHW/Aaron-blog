@@ -1,4 +1,4 @@
-export type Status = 'live' | 'in-progress' | 'archived'
+export type Progress = 'done' | 'inProgress'
 
 export type CodeBlock = {
   label: string
@@ -12,10 +12,11 @@ export type Project = {
   tags: string[]
   github?: string
   live?: string
-  status: Status
+  progress: Progress
   overview?: string
   features?: string[]
   architecture?: string[]
+  architectureImage?: string
   codeBlocks?: CodeBlock[]
 }
 
@@ -26,15 +27,15 @@ export const projects: Project[] = [
     description: 'Agent tracing software for observing and debugging LLM agent behaviour.',
     tags: ['Scala', 'http4s', 'Circe', 'Skunk', 'React', 'TypeScript', 'Mantine'],
     github: 'https://github.com/BAronHW/Lumina',
-    status: 'in-progress',
+    progress: 'inProgress',
   },
   {
     id: 2,
     name: 'KV Store',
-    description: 'A key-value store with a lexer and recursive descent parser, built in C. Features a REPL with TTL, persistence, and chained hash map collision handling.',
+    description: 'A key-value store with a lexer and top-down parser, built in C. Features a REPL with TTL, persistence, and chained hash map collision handling.',
     tags: ['C', 'Makefile', 'Lexer', 'Parser'],
-    status: 'archived',
-    overview: 'A key-value store built from scratch in C, featuring a custom lexer and recursive descent parser. The project implements a full REPL with support for TTL-based expiry, file persistence, and a hash map with chained collision handling, all without external dependencies.',
+    progress: 'inProgress',
+    overview: 'A key-value store built from scratch in C, featuring a custom lexer and top-down parser. The project implements a full REPL with support for TTL-based expiry, file persistence, and a hash map with chained collision handling, all without external dependencies.',
     features: [
       'SET, GET, DELETE, EXISTS operations',
       'TTL-based key expiry',
@@ -46,7 +47,7 @@ export const projects: Project[] = [
     architecture: [
       'kv_store.c: REPL entry point and command dispatch',
       'lexer.c/h: tokenizer that splits raw input into a flat token stream',
-      'parser.c/h: recursive descent parser that validates token sequences and builds command structs',
+      'parser.c/h: top-down parser that validates token sequences and builds command structs',
       'hash_table.c/h: hash map with string keys/values and chained collision handling',
       'Pipeline: raw input → tokenize() → parse_tokens() → dispatch → hash table ops',
     ],
@@ -96,7 +97,7 @@ exit_cmd   → EXIT`,
     description: 'Application for lawyers to track and search cases digitally, using embeddings and RAG for intelligent document retrieval.',
     tags: ['Node.js', 'React.js', 'Redis', 'BullMQ', 'RAG', 'AWS S3', 'JWT'],
     github: 'https://github.com/BAronHW/CaseCompass',
-    status: 'archived',
+    progress: 'done',
     overview: 'CaseCompass is a legal case management tool designed to help lawyers digitally track, search, and interact with their cases and documents. It uses a RAG pipeline to allow attorneys to query their case files in natural language, with AI-powered contract analysis and automated drafting built on top.',
     features: [
       'Session auth with JWT and Google sign-in',
@@ -113,6 +114,7 @@ exit_cmd   → EXIT`,
       'Redis + BullMQ for async background processing',
       'AWS S3 for document storage',
     ],
+    architectureImage: '/case-compass-architecture.png',
   },
   {
     id: 4,
@@ -120,7 +122,7 @@ exit_cmd   → EXIT`,
     description: 'Personal banking app for students to track expenses, manage accounts, and visualise spending patterns.',
     tags: ['Next.js', 'TypeScript', 'GraphQL', 'Apollo', 'Firebase', 'PostgreSQL', 'Prisma', 'shadcn/ui'],
     github: 'https://github.com/BAronHW/Finance-App',
-    status: 'archived',
+    progress: 'done',
     overview: 'FinApp is a student-focused personal finance application for tracking spending, managing accounts, and building better financial habits. It provides a dashboard with real-time account balances, transaction history, and spending visualisations to help students stay on top of their money.',
     features: [
       'User authentication via Firebase',

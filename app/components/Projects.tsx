@@ -26,7 +26,17 @@ export default function Projects() {
           <div onClick={() => router.push(`/projects/${project.id}`)} className="block h-full cursor-pointer">
           <Card className="bg-[#252320] ring-0 shadow-none h-full flex flex-col hover:bg-[#2e2b27] transition-colors">
             <CardHeader className="pb-3">
-              <CardTitle className="text-zinc-100 text-lg">{project.name}</CardTitle>
+              <div className="flex items-center gap-2 mb-1">
+                <CardTitle className="text-zinc-100 text-lg">{project.name}</CardTitle>
+                <span className="relative group/dot flex-shrink-0">
+                  <span
+                    className={`block w-2 h-2 rounded-full ${project.progress === 'inProgress' ? 'bg-yellow-400' : 'bg-zinc-500'}`}
+                  />
+                  <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 px-2 py-0.5 rounded text-xs text-zinc-200 bg-zinc-800 whitespace-nowrap opacity-0 group-hover/dot:opacity-100 transition-opacity pointer-events-none">
+                    {project.progress === 'inProgress' ? 'In Progress' : 'Done'}
+                  </span>
+                </span>
+              </div>
               <CardDescription className="text-zinc-400 text-sm leading-relaxed">{project.description}</CardDescription>
             </CardHeader>
 
